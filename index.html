@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>아침 서재 — 새 주소로 옮겼어요</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://morningseojae.github.io/seojae-open/">
+<style>
+:root{--ink:#2b2420;--soft:#6b5d52;--paper:#fbf6ee;--desk:#efe6d8;--acc:#7a2e2a;--edge:#e2d6c4}
+@media (prefers-color-scheme:dark){:root{--ink:#efe6da;--soft:#b9ab9c;--paper:#2a2420;--desk:#1f1a17;--acc:#e08a7e;--edge:#463c34}}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--desk);color:var(--ink);font:17px/1.7 -apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+main{width:min(560px,100%);background:var(--paper);border:1px solid var(--edge);border-top:5px solid var(--acc);border-radius:14px;padding:26px 22px;box-shadow:0 20px 50px -24px rgba(0,0,0,.45)}
+h1{font-size:26px;margin:0 0 8px}p{margin:0 0 12px}.soft{color:var(--soft);font-size:15px}
+.go{display:block;text-align:center;background:var(--acc);color:#fff;text-decoration:none;font-weight:800;font-size:18px;padding:14px 16px;border-radius:12px;margin:18px 0 8px}
+.addr{font-family:ui-monospace,Menlo,monospace;font-size:14px;word-break:break-all;background:rgba(0,0,0,.05);padding:6px 10px;border-radius:8px;display:inline-block}
+.box{border:1px dashed var(--edge);border-radius:12px;padding:14px 14px 6px;margin:16px 0 0}
+.box h2{font-size:17px;margin:0 0 6px}
+button{font:inherit;font-weight:800;padding:12px 16px;border-radius:12px;border:1.5px solid var(--acc);background:transparent;color:var(--acc);cursor:pointer;width:100%;margin:6px 0 10px}
+ol{margin:0 0 10px;padding-left:20px}li{margin:2px 0}
+</style></head><body><main>
+<h1>새 주소로 옮겼어요</h1>
+<p>아침 서재 공개판이 더 안전한 새 주소로 이사했습니다.</p>
+<p><span class="addr">https://morningseojae.github.io/seojae-open/</span></p>
+<a class="go" id="go" href="https://morningseojae.github.io/seojae-open/">새 주소로 가기 →</a>
+<p class="soft">홈 화면에 앱으로 설치해 두셨다면, 새 주소에서 한 번 더 설치해 주세요(예전 아이콘은 지우셔도 됩니다).</p>
+<div class="box" id="drive" hidden><h2>구글로 쓰셨나요?</h2><p>기록은 내 구글 드라이브에 그대로 있습니다. 새 주소에서 <b>「구글로 시작하기」</b>를 한 번만 누르시면 이어서 쓰실 수 있어요.</p></div>
+<div class="box" id="local" hidden><h2>이 기기에만 있는 기록이 있어요</h2>
+<p>「구글 없이 이 기기에서」 쓰신 글은 이 주소에 남아 있어, 새 주소로 옮겨 드려야 합니다.</p>
+<button id="dl" type="button">① 이 기기 기록을 백업 파일로 받기</button>
+<ol><li>위 단추로 백업 파일을 받습니다(휴대폰은 공유 창에서 「파일에 저장」).</li><li>「새 주소로 가기」 → 「구글 없이 이 기기에서 시작하기」(또는 「구글로 시작하기」).</li><li>설정 → 기록 지키기 → <b>「백업 파일 합치기」</b>에서 받은 파일을 고릅니다.</li></ol>
+<p class="soft" id="dlmsg"></p></div>
+<p class="soft" style="margin-top:16px">아침 서재 · 아빠 임요한 목사와 딸 임하은 작가 · 문의 4gospel@gmail.com</p>
+</main>
+<script>
+(function(){
+  var NEW="https://morningseojae.github.io/seojae-open/";
+  // 예전 앱이 남긴 오프라인 사본(서비스 워커·캐시)을 지움 — 예전 화면이 다시 뜨지 않게
+  try{ if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(function(rs){ rs.forEach(function(r){ r.unregister(); }); }); }catch(e){}
+  try{ if(window.caches) caches.keys().then(function(ks){ ks.forEach(function(k){ if(/^seojae-open/.test(k)) caches.delete(k); }); }); }catch(e){}
+  var ls=function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } };
+  if(ls("seojae-open.drive")) document.getElementById("drive").hidden=false;
+  function idbRead(){ return new Promise(function(ok){ try{ var r=indexedDB.open("seojae-open",1); r.onupgradeneeded=function(){ try{ r.result.createObjectStore("kv"); }catch(e){} };
+    r.onsuccess=function(){ try{ var q=r.result.transaction("kv").objectStore("kv").get("local:data"); q.onsuccess=function(){ ok(q.result||null); }; q.onerror=function(){ ok(null); }; }catch(e){ ok(null); } }; r.onerror=function(){ ok(null); }; }catch(e){ ok(null); } }); }
+  idbRead().then(function(t){ var text=t||ls("seojae-open.morningStudy.v2"), d=null; try{ d=JSON.parse(text||"null"); }catch(e){}
+    var has=d&&((d.writings||[]).length||Object.keys(d.diary||{}).length||(d.jots||[]).length||(d.books||[]).length||(d.notes||[]).length);
+    if(!has){ if(!ls("seojae-open.drive")&&!ls("seojae-open.devonly")) setTimeout(function(){ location.replace(NEW+location.hash); },1800); return; }   // 이 기기에 기록이 없으면 저절로 새 주소로
+    document.getElementById("local").hidden=false;
+    document.getElementById("dl").onclick=function(){ var day=new Date().toISOString().slice(0,10), name="아침서재-백업-"+day+".json",
+        body=JSON.stringify({app:"아침 서재",kind:"backup",build:"예전주소",at:new Date().toISOString(),data:d});
+      var f; try{ f=new File([body],name,{type:"application/json"}); }catch(e){}
+      if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&matchMedia("(pointer:coarse)").matches){ navigator.share({files:[f],title:"아침 서재 백업"}).catch(function(){}); }
+      else { var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([body],{type:"application/json"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },800); }
+      document.getElementById("dlmsg").textContent="백업 파일을 받았습니다. 글 "+(d.writings||[]).length+"편 · 일기 "+Object.keys(d.diary||{}).length+"날이 들어 있어요. 이 주소의 기록은 지우지 않고 그대로 둡니다."; };
+  });
+})();
+</script>
+</body></html>
